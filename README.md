@@ -93,7 +93,23 @@ go install github.com/air-verse/air@latest
 
 ## 🗄 Cấu hình Database
 
-### Tạo database MySQL
+### Tạo database MySQL với docker
+
+```bash
+docker run --name mysql-server -e MYSQL_ROOT_PASSWORD=rootpass -e MYSQL_DATABASE=mydb -e MYSQL_USER=myuser -e MYSQL_PASSWORD=mypass -p 3306:3306 -d mysql:8.0
+```
+
+- Connection type: MySQL
+- Server name:
+  - Nếu bạn kết nối từ máy host (Windows/Linux) → điền localhost hoặc 127.0.0.1
+  - Nếu bạn kết nối từ một container khác trong cùng docker-compose → điền mysql-server (tên service/container).
+- Authentication type: Password
+- User name: myuser
+- Password: mypass
+- Database name: mydb
+- Port: 3306 (mặc định)
+
+### Hoặc sử dụng lệnh sql
 
 ```sql
 CREATE DATABASE mydb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
