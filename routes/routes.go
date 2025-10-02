@@ -13,6 +13,7 @@ func SetupRouter() *gin.Engine {
 
 	// Load từng group routes
 	RegisterUserRoutes(r)
+	RegisterAuthRoutes(r)
 
 	return r
 }

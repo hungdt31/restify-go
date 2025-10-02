@@ -285,7 +285,7 @@ DB.AutoMigrate(&models.User{}, &models.Product{})
 
 ## 📝 TODO
 
-- [ ] Thêm authentication (JWT)
+- [x] Thêm authentication (JWT)
 - [ ] Thêm validation chi tiết hơn
 - [ ] Thêm pagination cho GET endpoints
 - [ ] Thêm unit tests

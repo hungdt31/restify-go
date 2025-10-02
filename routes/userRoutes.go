@@ -1,14 +1,16 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	"myapp/controllers"
+	"myapp/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
 func RegisterUserRoutes(r *gin.Engine) {
-	userGroup := r.Group("/users")
+	userGroup := NewBaseRoute(r, "/users").Group()
 	{
-		userGroup.POST("/", controllers.CreateUser)
-		userGroup.GET("/", controllers.GetUsers)
+		userGroup.POST("", controllers.CreateUser)
+		userGroup.GET("", middleware.AuthRequired(), controllers.GetUsers)
 	}
 }
