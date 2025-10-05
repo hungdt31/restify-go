@@ -11,6 +11,9 @@
 - [Cài đặt](#-cài-đặt)
 - [Cấu hình Database](#-cấu-hình-database)
 - [Chạy ứng dụng](#-chạy-ứng-dụng)
+ - [Chạy bằng Docker](#-chạy-bằng-docker)
+- [Môi trường Staging/Production](#-môi-trường-stagingproduction)
+- [Môi trường Development (Docker)](#-môi-trường-development-docker)
 - [API Endpoints](#-api-endpoints)
 - [Ví dụ sử dụng](#-ví-dụ-sử-dụng)
 
@@ -160,6 +163,106 @@ go build -o tmp/main.exe .
 ```
 
 Server sẽ chạy tại: **http://localhost:8080**
+
+### Phương pháp 4: Docker Compose (Khuyên dùng cho môi trường chuẩn hóa)
+
+1) Tạo file `.env` ở thư mục gốc với giá trị ví dụ:
+
+```env
+# App
+APP_PORT=8080
+
+# MySQL
+DB_HOST=db
+DB_PORT=3306
+DB_NAME=mydb
+DB_USER=myuser
+DB_PASS=mypass
+```
+
+2) Khởi chạy docker-compose:
+
+```bash
+docker compose up -d --build
+```
+
+3) Truy cập API: `http://localhost:8080`
+
+Ghi chú:
+- Service `db` dùng `mysql:8.0` và map cổng `3306:3306` cho host.
+- Ứng dụng chạy bằng binary đã build trong image (không mount source vào container) nhằm đảm bảo môi trường chạy ổn định.
+- Biến `DB_HOST` mặc định được đặt là `db` để app kết nối MySQL nội bộ qua network của compose.
+
+## 🌐 Môi trường Staging/Production
+
+Từ nay ứng dụng hỗ trợ cấu hình đa môi trường qua biến `APP_ENV` và các file `.env.*`.
+
+### Cơ chế nạp biến môi trường
+
+- App đọc `APP_ENV` và tìm file `.env.<APP_ENV>` trước, nếu không tồn tại sẽ fallback `.env`.
+- Ví dụ: `APP_ENV=staging` → ưu tiên `.env.staging`.
+
+### Staging
+
+1) Tạo file môi trường dựa trên mẫu:
+
+```bash
+copy .env.staging.example .env.staging  # Windows PowerShell/cmd
+# hoặc
+cp .env.staging.example .env.staging     # Linux/macOS
+```
+
+2) Khởi chạy môi trường staging:
+
+```bash
+make staging-up
+# Dừng và xóa: make staging-down
+```
+
+- App sẽ chạy tại `http://localhost:8081`
+- MySQL staging sẽ map `3307:3306` để không xung đột với dev.
+
+### Production
+
+1) Tạo file `.env.production` (không commit) dựa trên mẫu:
+
+```bash
+copy .env.production.example .env.production
+```
+
+2) Chạy production (app-only, không kèm MySQL nội bộ):
+
+```bash
+make prod-up    # build & run image với APP_ENV=production
+# Dừng: make prod-down
+```
+
+Ghi chú Production:
+- Sử dụng DB managed (RDS/Cloud SQL, v.v.). Thiết lập `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME` trong `.env.production`.
+- Image build tối giản từ Dockerfile multi-stage, chạy user không phải root.
+
+## 🧑‍💻 Môi trường Development (Docker)
+
+Sử dụng `docker-compose.dev.yml` để chạy môi trường dev có hot reload (Air).
+
+1) Tạo file môi trường:
+
+```bash
+copy .env.development.example .env.development  # Windows
+# hoặc
+cp .env.development.example .env.development    # Linux/macOS
+```
+
+2) Khởi chạy dev bằng Docker:
+
+```bash
+make docker-dev-up
+# Dừng/xoá: make docker-dev-down
+```
+
+Ghi chú:
+- App map cổng `8082:8080`, MySQL dev map `3308:3306` để tránh xung đột.
+- Service `app` dùng image `golang:1.22`, bind-mount code `./:/src` và chạy `air` để hot reload.
 
 ## 📡 API Endpoints
 
