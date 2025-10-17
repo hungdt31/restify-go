@@ -1,16 +1,22 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
-// Model User
+// User model tương ứng với bảng `users`
 type User struct {
-	ID    uint   `json:"id" gorm:"primaryKey;autoIncrement"`
-	Name  string `json:"name"`
-	Email string `json:"email" gorm:"unique"`
+	ID       uint   `json:"id" gorm:"primaryKey;autoIncrement"`
+	Email    string `json:"email" gorm:"unique;not null"`
+	Name     string `json:"name" gorm:"not null"`
+	Password string `json:"password" gorm:"not null"`
+	// CreatedAt time.Time      `json:"created_at" gorm:"autoCreateTime"`
+	// UpdatedAt time.Time      `json:"updated_at" gorm:"autoUpdateTime"`
+	// DeletedAt gorm.DeletedAt `json:"-" gorm:"index"` // Tùy chọn: cho soft delete
 }
 
-// Nếu cần thêm method của User có thể viết ở đây
+// BeforeCreate hook — có thể dùng để hash password hoặc validate
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
-	// ví dụ: validate trước khi insert
+	// Ví dụ: validate email hoặc hash password
 	return nil
 }

@@ -1,4 +1,5 @@
 .PHONY: dev run build clean staging-up staging-down prod-build prod-up prod-down docker-dev-up docker-dev-down
+.PHONY: test test-verbose test-coverage test-unit test-integration
 
 # Chạy với hot reload
 dev:
@@ -20,6 +21,29 @@ clean:
 	@echo 🧹 Cleaning...
 	@if exist tmp rmdir /s /q tmp
 	@if exist build-errors.log del build-errors.log
+
+# Testing commands
+test:
+	@echo 🧪 Running all tests...
+	@go test ./... -v
+
+test-verbose:
+	@echo 🧪 Running tests with verbose output...
+	@go test ./... -v -count=1
+
+test-coverage:
+	@echo 📊 Running tests with coverage...
+	@go test ./... -cover -coverprofile=coverage.out
+	@go tool cover -html=coverage.out -o coverage.html
+	@echo ✅ Coverage report generated: coverage.html
+
+test-unit:
+	@echo 🧪 Running unit tests...
+	@go test ./controllers/... ./models/... ./middleware/... -v
+
+test-integration:
+	@echo 🧪 Running integration tests...
+	@go test ./tests/... -v
 
 # Docker compose - development
 docker-dev-up:

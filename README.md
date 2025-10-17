@@ -392,9 +392,9 @@ DB.AutoMigrate(&models.User{}, &models.Product{})
 - [ ] Thêm validation chi tiết hơn
 - [ ] Thêm pagination cho GET endpoints
 - [ ] Thêm unit tests
-- [ ] Thêm Docker support
+- [x] Thêm Docker support
 - [ ] Thêm logging vào file
-- [ ] Thêm environment variables config
+- [x] Thêm environment variables config
 
 ## 🤝 Contributing
 

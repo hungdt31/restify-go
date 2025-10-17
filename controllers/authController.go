@@ -4,11 +4,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
+	"myapp/config"
 	"myapp/database"
 	"myapp/models"
-	"myapp/config"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var jwtSecret = []byte(config.GetEnv("JWT_SECRET", "my_secret_key"))
